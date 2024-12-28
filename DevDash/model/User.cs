@@ -1,62 +1,67 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DevDash.model
 {
-    [Index(nameof(Username), IsUnique = true)]
+    [Index(nameof(UserName), IsUnique = true)]
     [Index(nameof(Email), IsUnique = true)]
-    public class User
+    public class User : IdentityUser<int>
     {
-        [Key]
-        public int Id { get; set; }
-
         [Required]
-        [MaxLength(255)]
+        [StringLength(20, MinimumLength = 3)]
         public required string FirstName { get; set; }
 
         [Required]
-        [MaxLength(255)]
+        [StringLength(20, MinimumLength = 3)]
         public required string LastName { get; set; }
 
         [Required]
-        [MaxLength(255)]
-        public required string Username { get; set; }
+        [StringLength(20, MinimumLength = 3)]
+        public override string UserName { get; set; } = string.Empty;
 
         [Required]
         [MaxLength(255)]
-        public required string Password { get; set; }
+        public override string Email { get; set; } = string.Empty;
 
-        [EmailAddress]
-        [MaxLength(255)]
-        public required string Email { get; set; }
-
-        public DateTime? Birthday { get; set; }
+        public DateOnly? Birthday { get; set; }
 
         [Phone]
         [MaxLength(50)]
         [RegularExpression(@"^[0-9\+]{10,15}$")]
-        public required string PhoneNumber { get; set; }
+        public override string PhoneNumber { get; set; } = string.Empty;
 
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime JoinedDate { get; set; } = DateTime.Now;
 
         public DateTime? LastActiveDate { get; set; }
 
-        [MaxLength(255)]
-        public string? Avatar { get; set; }
+        public byte[]? Avatar { get; set; }
 
         public bool Verified { get; set; } = false;
 
+        public String? Personality { get; set; }
+
         // Navigation Properties
-        public ICollection<UserTenant>? UserTenants { get; set; }
-        public ICollection<TeamMember>? TeamMembers { get; set; }
-        public ICollection<IssueAssignedUser>? IssueAssignedUsers { get; set; }
-        public ICollection<Comment>? Comments { get; set; }
+
         public ICollection<PersonalTask>? PersonalTasks { get; set; }
         public ICollection<PrivateNote>? PrivateNotes { get; set; }
-        public ICollection<Team>? SupervisedTeams { get; set; }
+        public ICollection<Tenant>? OwnedTenants { get; set; }
+        public ICollection<Tenant>? JoinedTenants { get; set; }
+        public ICollection<UserTenant>? UserTenants { get; set; }
         public ICollection<Project>? ManagedProjects { get; set; }
 
+        public ICollection<Project>? WorkingProjects { get; set; }
+        public ICollection<UserProject>? UserProjects { get; set; }
+
+        public ICollection<Sprint>? SprintsCreated { get; set; }
+
+        public ICollection<Issue>? IssuesCreated { get; set; }
+
+        public ICollection<Issue>? IssuesAssigned { get; set; }
+
+        public ICollection<IssueAssignedUser>? IssueAssignedUsers { get; set; }
+        public ICollection<Comment>? Comments { get; set; }
     }
 }

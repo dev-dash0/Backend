@@ -9,6 +9,7 @@ namespace DevDash.model
         public int Id { get; set; }
 
         [Required]
+        [ForeignKey("IssueId")]
         public int IssueId { get; set; }
 
         [Required]
@@ -16,16 +17,17 @@ namespace DevDash.model
         public required string Content { get; set; }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public DateTime CreationDate { get; set; } = DateTime.Now;
+        public DateTime CreationDate { get; set; }
 
-        [Required]
-        public int CreatedBy { get; set; }
+        [ForeignKey("CreatedBy")]
+        public int? CreatedById { get; set; }
+
+        public string? Name { get; set; }
 
         // Navigation Properties
         [Required]
-        [ForeignKey("IssueId")]
         public required Issue Issue { get; set; }
-        [ForeignKey("CreatedBy")]
-        public required User CreatedByUser { get; set; } 
+
+        public  User? CreatedBy { get; set; }
     }
 }

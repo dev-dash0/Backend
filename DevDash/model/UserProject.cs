@@ -1,15 +1,12 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 
 namespace DevDash.model
 {
-    public class UserTenant
+    public class UserProject
     {
-        [Key]
-        public int UserId { get; set; }
 
-        [Key]
-        public int TenantId { get; set; }
+        public int UserId { get; set; }
+        public int ProjectId { get; set; }
 
         [Required]
         [StringLength(20)]
@@ -22,9 +19,9 @@ namespace DevDash.model
         [DataType(DataType.Date)]
         public DateTime JoinedDate { get; set; } = DateTime.Now;
 
-        // Navigation Properties
-        public required User User { get; set; }
-        public required Tenant Tenant { get; set; }
-    }
+        //navigation properties
+        public User User { get; set; }
+        public Project Project { get; set; }
 
+    }
 }

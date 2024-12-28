@@ -6,6 +6,7 @@ namespace DevDash.model
     public class Sprint
     {
         public int Id { get; set; }
+
         [Required]
         [MaxLength(255)]
         public required string Title { get; set; }
@@ -13,22 +14,26 @@ namespace DevDash.model
 
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime CreatedAt { get; set; } = DateTime.Now;
-        public DateTime? StartDate { get; set; }
-        public DateTime? EndDate { get; set; }
+        public DateOnly? StartDate { get; set; }
+        public DateOnly? EndDate { get; set; }
+
         [MaxLength(255)]
         [RegularExpression("Planned|In Progress|Completed")]
         public required string Status { get; set; }
-        [Required]
-        public required int CreatedBy { get; set; }
         public string? Summary { get; set; }
+
+        // Foreign Keys
+
+        public int? CreatedById { get; set; }
 
         [Required]
         public required int ProjectId { get; set; }
 
         // Navigation Properties
 
-        public required User CreatedByUser { get; set; }
+        public  User? CreatedBy { get; set; }
         public required Project Project { get; set; }
+        public ICollection<Issue>? Issues { get; set; }
     }
 
 }

@@ -5,7 +5,6 @@ namespace DevDash.model
 {
     public class Issue
     {
-
         [Key]
         public int Id { get; set; }
 
@@ -16,20 +15,23 @@ namespace DevDash.model
         [MaxLength(255)]
         public string? Description { get; set; }
 
+        public bool IsBacklog { get; set; } = true;
+
         [MaxLength(255)]
         public string? Labels { get; set; }
 
         [Required]
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public DateTime CreationDate { get; set; } = DateTime.Now;
+        public DateTime CreationDate { get; set; }
 
-        public DateTime? StartDate { get; set; }
+        public DateOnly? StartDate { get; set; }
 
-        public DateTime? Deadline { get; set; }
+        public DateOnly? Deadline { get; set; }
 
-        public DateTime? DeliveredDate { get; set; }
+        public DateOnly? DeliveredDate { get; set; }
 
         public DateTime? LastUpdate { get; set; }
+
         [MaxLength(20)]
         [RegularExpression("Bug|Feature|Task|Epic", ErrorMessage = "Invalid issue type.")]
         [Required]
@@ -44,22 +46,27 @@ namespace DevDash.model
         [Required]
         [RegularExpression("BackLog|to do|In Progress|Reviewing|Completed|Canceled|Postponed")]
         public required string Status { get; set; }
-        [Required]
-        [ForeignKey(nameof(Sprint.Id))]
-        public required int SprintId { get; set; } // Foreign key
-        [Required]
-        [ForeignKey(nameof(Project.Id))]
-        public required int  ProjectId { get; set; } // Foreign key
-        public Sprint? Sprint { get; set; } // Navigation property
+
+        //Foreign Keys
+
+        public int? SprintId { get; set; } // Made nullable to allow setting to null
 
         [Required]
-        public required int CreatedById { get; set; } // Foreign key
-        [Required]
-        public required User CreatedBy { get; set; } // Navigation property
+        public required int ProjectId { get; set; }
+
+        public  int? CreatedById { get; set; }
+
+        // Navigation Properties
+        public Sprint? Sprint { get; set; }
+        public required Project Project { get; set; }
+
+        public  User? CreatedBy { get; set; }
 
         public ICollection<User>? AssignedUsers { get; set; }
 
         public ICollection<IssueAssignedUser>? IssueAssignedUsers { get; set; }
+
+        public ICollection<Comment>? Comments { get; set; }
 
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DevDash.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241228150234_Init")]
+    partial class Init
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -20,135 +23,6 @@ namespace DevDash.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("DevDash.model.Comment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<int?>("CreatedById")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreationDate")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("IssueId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("IssueId");
-
-                    b.ToTable("Comments");
-                });
-
-            modelBuilder.Entity("DevDash.model.Issue", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int?>("CreatedById")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreationDate")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateOnly?>("Deadline")
-                        .HasColumnType("date");
-
-                    b.Property<DateOnly?>("DeliveredDate")
-                        .HasColumnType("date");
-
-                    b.Property<string>("Description")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<bool>("IsBacklog")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Labels")
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<DateTime?>("LastUpdate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Priority")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<int>("ProjectId")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("SprintId")
-                        .HasColumnType("int");
-
-                    b.Property<DateOnly?>("StartDate")
-                        .HasColumnType("date");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("Type")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("ProjectId");
-
-                    b.HasIndex("SprintId");
-
-                    b.ToTable("Issues");
-                });
-
-            modelBuilder.Entity("DevDash.model.IssueAssignedUser", b =>
-                {
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("IssueId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("Assign_date")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2");
-
-                    b.HasKey("UserId", "IssueId");
-
-                    b.HasIndex("IssueId");
-
-                    b.ToTable("IssueAssignedUsers", (string)null);
-                });
 
             modelBuilder.Entity("DevDash.model.PersonalTask", b =>
                 {
@@ -230,108 +104,6 @@ namespace DevDash.Migrations
                     b.ToTable("PrivateNotes");
                 });
 
-            modelBuilder.Entity("DevDash.model.Project", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreationDate")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateOnly?>("EndDate")
-                        .HasColumnType("date");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("Priority")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("ProjectCode")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int?>("ProjectManagerId")
-                        .HasColumnType("int");
-
-                    b.Property<DateOnly?>("StartDate")
-                        .HasColumnType("date");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<int>("TenantId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("ProjectManagerId");
-
-                    b.HasIndex("TenantId");
-
-                    b.ToTable("Projects");
-                });
-
-            modelBuilder.Entity("DevDash.model.Sprint", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2");
-
-                    b.Property<int?>("CreatedById")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateOnly?>("EndDate")
-                        .HasColumnType("date");
-
-                    b.Property<int>("ProjectId")
-                        .HasColumnType("int");
-
-                    b.Property<DateOnly?>("StartDate")
-                        .HasColumnType("date");
-
-                    b.Property<string>("Status")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<string>("Summary")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("ProjectId");
-
-                    b.ToTable("Sprints");
-                });
-
             modelBuilder.Entity("DevDash.model.Tenant", b =>
                 {
                     b.Property<int>("Id")
@@ -365,6 +137,10 @@ namespace DevDash.Migrations
                     b.Property<string>("TenantUrl")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -439,9 +215,6 @@ namespace DevDash.Migrations
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Personality")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("PhoneNumber")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -484,32 +257,6 @@ namespace DevDash.Migrations
                         .IsUnique();
 
                     b.ToTable("AspNetUsers", (string)null);
-                });
-
-            modelBuilder.Entity("DevDash.model.UserProject", b =>
-                {
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("ProjectId")
-                        .HasColumnType("int");
-
-                    b.Property<bool>("AcceptedInvitation")
-                        .HasColumnType("bit");
-
-                    b.Property<DateTime>("JoinedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<string>("Role")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
-                    b.HasKey("UserId", "ProjectId");
-
-                    b.HasIndex("ProjectId");
-
-                    b.ToTable("UserProjects", (string)null);
                 });
 
             modelBuilder.Entity("DevDash.model.UserTenant", b =>
@@ -671,68 +418,6 @@ namespace DevDash.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("DevDash.model.Comment", b =>
-                {
-                    b.HasOne("DevDash.model.User", "CreatedBy")
-                        .WithMany("Comments")
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("DevDash.model.Issue", "Issue")
-                        .WithMany("Comments")
-                        .HasForeignKey("IssueId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("Issue");
-                });
-
-            modelBuilder.Entity("DevDash.model.Issue", b =>
-                {
-                    b.HasOne("DevDash.model.User", "CreatedBy")
-                        .WithMany("IssuesCreated")
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("DevDash.model.Project", "Project")
-                        .WithMany("Issues")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DevDash.model.Sprint", "Sprint")
-                        .WithMany("Issues")
-                        .HasForeignKey("SprintId")
-                        .OnDelete(DeleteBehavior.Restrict);
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("Project");
-
-                    b.Navigation("Sprint");
-                });
-
-            modelBuilder.Entity("DevDash.model.IssueAssignedUser", b =>
-                {
-                    b.HasOne("DevDash.model.Issue", "Issue")
-                        .WithMany("IssueAssignedUsers")
-                        .HasForeignKey("IssueId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DevDash.model.User", "User")
-                        .WithMany("IssueAssignedUsers")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Issue");
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("DevDash.model.PersonalTask", b =>
                 {
                     b.HasOne("DevDash.model.User", "User")
@@ -755,42 +440,6 @@ namespace DevDash.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("DevDash.model.Project", b =>
-                {
-                    b.HasOne("DevDash.model.User", "Manager")
-                        .WithMany("ManagedProjects")
-                        .HasForeignKey("ProjectManagerId")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("DevDash.model.Tenant", "Tenant")
-                        .WithMany("Projects")
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Manager");
-
-                    b.Navigation("Tenant");
-                });
-
-            modelBuilder.Entity("DevDash.model.Sprint", b =>
-                {
-                    b.HasOne("DevDash.model.User", "CreatedBy")
-                        .WithMany("SprintsCreated")
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("DevDash.model.Project", "Project")
-                        .WithMany("Sprints")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("Project");
-                });
-
             modelBuilder.Entity("DevDash.model.Tenant", b =>
                 {
                     b.HasOne("DevDash.model.User", "Owner")
@@ -800,25 +449,6 @@ namespace DevDash.Migrations
                         .IsRequired();
 
                     b.Navigation("Owner");
-                });
-
-            modelBuilder.Entity("DevDash.model.UserProject", b =>
-                {
-                    b.HasOne("DevDash.model.Project", "Project")
-                        .WithMany("UserProjects")
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.HasOne("DevDash.model.User", "User")
-                        .WithMany("UserProjects")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Project");
-
-                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("DevDash.model.UserTenant", b =>
@@ -891,53 +521,18 @@ namespace DevDash.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("DevDash.model.Issue", b =>
-                {
-                    b.Navigation("Comments");
-
-                    b.Navigation("IssueAssignedUsers");
-                });
-
-            modelBuilder.Entity("DevDash.model.Project", b =>
-                {
-                    b.Navigation("Issues");
-
-                    b.Navigation("Sprints");
-
-                    b.Navigation("UserProjects");
-                });
-
-            modelBuilder.Entity("DevDash.model.Sprint", b =>
-                {
-                    b.Navigation("Issues");
-                });
-
             modelBuilder.Entity("DevDash.model.Tenant", b =>
                 {
-                    b.Navigation("Projects");
-
                     b.Navigation("UserTenants");
                 });
 
             modelBuilder.Entity("DevDash.model.User", b =>
                 {
-                    b.Navigation("Comments");
-
-                    b.Navigation("IssueAssignedUsers");
-
-                    b.Navigation("IssuesCreated");
-
-                    b.Navigation("ManagedProjects");
-
                     b.Navigation("OwnedTenants");
 
                     b.Navigation("PersonalTasks");
 
                     b.Navigation("PrivateNotes");
-
-                    b.Navigation("SprintsCreated");
-
-                    b.Navigation("UserProjects");
 
                     b.Navigation("UserTenants");
                 });

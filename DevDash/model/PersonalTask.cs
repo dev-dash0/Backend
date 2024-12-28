@@ -28,13 +28,6 @@ namespace DevDash.model
 
         public DateTime? DeliveredDate { get; set; }
 
-        public DateTime? LastUpdate { get; set; }
-
-
-
-        [Required]
-        public required int UserId { get; set; }
-
         [MaxLength(20)]
         [Required]
         [RegularExpression("Task|Reminder", ErrorMessage = "Invalid personal task type.")]
@@ -48,7 +41,11 @@ namespace DevDash.model
         [RegularExpression("to do|In Progress|Reviewing|Completed|Canceled|Postponed", ErrorMessage = "Invalid task status.")]
         public string? Status { get; set; }
 
+        //Foreign Keys
+
         [Required]
+        public required int UserId { get; set; }
+
         public required User User { get; set; }
     }
 }

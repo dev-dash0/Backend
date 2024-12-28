@@ -5,38 +5,45 @@ namespace DevDash.model
 {
     public class Project
     {
+        [Key]
         public int Id { get; set; }
+
+        public string ProjectCode { get; set; } = Guid.NewGuid().ToString().Substring(0, 8);
+
         [Required]
-        [MaxLength(255)]
-        public required string Name { get; set; } // Fix applied here
-        [MaxLength(500)]
+        [StringLength(20, MinimumLength = 3)]
+        public required string Name { get; set; }
+
         public string? Description { get; set; }
-        public DateTime? StartDate { get; set; }
-        public DateTime? EndDate { get; set; }
+
+        public DateOnly? StartDate { get; set; }
+
+        public DateOnly? EndDate { get; set; }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
         public DateTime CreationDate { get; set; } = DateTime.Now;
 
         [Required]
-        [RegularExpression("To do|Active|Completed|Pending|Canceled")]
+        [RegularExpression("Planning|Reviewing|Working on|Completed|Canceled|Postponed")]
         public string Status { get; set; } = string.Empty;
 
         [Required]
-        [ForeignKey(nameof(User.Id))]
-        public int ProjectManagerId { get; set; }
-
-        [Required]
-        public int TenantId { get; set; }
-        [Required]
-        [MaxLength(20)]
-        [RegularExpression("Low|Medium|High|Urgent")]
+        [RegularExpression("Low|Medium|High|Critical", ErrorMessage = "Invalid priority.")]
         public string Priority { get; set; } = string.Empty;
 
-        [Required]
-        public Tenant Tenant { get; set; } = null!;
-        [Required]
-        public User Manager { get; set; } = null!;
+        // Foreign Keys
+        public int TenantId { get; set; }
+        public int? ProjectManagerId { get; set; }
+
+
+        // Navigation Properties
+        public User? Manager { get; set; }
+        public Tenant Tenant { get; set; }
+        public ICollection<User>? Users { get; set; }   
+        public ICollection<UserProject>? UserProjects { get; set; }
+
         public ICollection<Sprint>? Sprints { get; set; }
-        public ICollection<Team>? Teams { get; set; }
+
+        public ICollection<Issue>? Issues { get; set; }
     }
 }

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DevDash.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241228205026_AddIssue")]
+    partial class AddIssue
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -20,41 +23,6 @@ namespace DevDash.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("DevDash.model.Comment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasMaxLength(255)
-                        .HasColumnType("nvarchar(255)");
-
-                    b.Property<int?>("CreatedById")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("CreationDate")
-                        .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("IssueId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CreatedById");
-
-                    b.HasIndex("IssueId");
-
-                    b.ToTable("Comments");
-                });
 
             modelBuilder.Entity("DevDash.model.Issue", b =>
                 {
@@ -80,9 +48,6 @@ namespace DevDash.Migrations
                     b.Property<string>("Description")
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
-
-                    b.Property<bool>("IsBacklog")
-                        .HasColumnType("bit");
 
                     b.Property<string>("Labels")
                         .HasMaxLength(255)
@@ -671,24 +636,6 @@ namespace DevDash.Migrations
                     b.ToTable("AspNetUserTokens", (string)null);
                 });
 
-            modelBuilder.Entity("DevDash.model.Comment", b =>
-                {
-                    b.HasOne("DevDash.model.User", "CreatedBy")
-                        .WithMany("Comments")
-                        .HasForeignKey("CreatedById")
-                        .OnDelete(DeleteBehavior.SetNull);
-
-                    b.HasOne("DevDash.model.Issue", "Issue")
-                        .WithMany("Comments")
-                        .HasForeignKey("IssueId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("CreatedBy");
-
-                    b.Navigation("Issue");
-                });
-
             modelBuilder.Entity("DevDash.model.Issue", b =>
                 {
                     b.HasOne("DevDash.model.User", "CreatedBy")
@@ -893,8 +840,6 @@ namespace DevDash.Migrations
 
             modelBuilder.Entity("DevDash.model.Issue", b =>
                 {
-                    b.Navigation("Comments");
-
                     b.Navigation("IssueAssignedUsers");
                 });
 
@@ -921,8 +866,6 @@ namespace DevDash.Migrations
 
             modelBuilder.Entity("DevDash.model.User", b =>
                 {
-                    b.Navigation("Comments");
-
                     b.Navigation("IssueAssignedUsers");
 
                     b.Navigation("IssuesCreated");

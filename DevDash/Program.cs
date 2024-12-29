@@ -1,7 +1,11 @@
 
 using DevDash.model;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using System.Text.Json.Serialization;
 
 namespace DevDash
 {
@@ -14,15 +18,45 @@ namespace DevDash
             // Add services to the container.
 
             builder.Services.AddControllers();
+            builder.Services.AddControllers()
+         .AddJsonOptions(options =>
+         {
+         options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
+         });
 
             builder.Services.AddDbContext<AppDbContext>(options =>
             {
-                options.UseSqlServer(builder.Configuration.GetConnectionString("cs"));
+                options.UseSqlServer(builder.Configuration.GetConnectionString("Cs"));
             });
 
             builder.Services.AddIdentity<User, IdentityRole<int>>()
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
+
+            builder.Services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
+                .AddJwtBearer(options =>
+                {
+                    options.TokenValidationParameters = new TokenValidationParameters
+                    {
+                        ValidateIssuer = true,
+                        ValidateAudience = true,
+                        ValidateLifetime = true,
+                        ValidateIssuerSigningKey = true,
+                        ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
+                        ValidAudience = builder.Configuration["JWT:ValidAudience"],
+                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
+                    };
+                });
+
+
+
+
+
+
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -39,6 +73,10 @@ namespace DevDash
 
             app.UseHttpsRedirection();
 
+
+
+
+
             app.UseAuthorization();
 
 
@@ -47,4 +85,6 @@ namespace DevDash
             app.Run();
         }
     }
+
+  
 }

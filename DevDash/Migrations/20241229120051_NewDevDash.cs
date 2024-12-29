@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace DevDash.Migrations
 {
     /// <inheritdoc />
-    public partial class addComment : Migration
+    public partial class NewDevDash : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

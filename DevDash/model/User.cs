@@ -2,7 +2,6 @@
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
 namespace DevDash.model
 {
     [Index(nameof(UserName), IsUnique = true)]
@@ -29,11 +28,13 @@ namespace DevDash.model
 
         [Phone]
         [MaxLength(50)]
-        [RegularExpression(@"^[0-9\+]{10,15}$")]
+        [Required]
+        //[RegularExpression(@"^[0-9\+]{10,15}$")]
+        //[RegularExpression(@"^(010 | 011 | 012 | 015)\d{8}$")]
         public override string PhoneNumber { get; set; } = string.Empty;
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public DateTime JoinedDate { get; set; } = DateTime.Now;
+
+        public DateTime JoinedDate { get; set; } = DateTime.UtcNow;
 
         public DateTime? LastActiveDate { get; set; }
 
@@ -42,7 +43,9 @@ namespace DevDash.model
         public bool Verified { get; set; } = false;
 
         public String? Personality { get; set; }
-
+      
+        
+    
         // Navigation Properties
 
         public ICollection<PersonalTask>? PersonalTasks { get; set; }

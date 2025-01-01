@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DevDash.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20241229130539_Joindate")]
+    partial class Joindate
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -53,7 +56,7 @@ namespace DevDash.Migrations
 
                     b.HasIndex("IssueId");
 
-                    b.ToTable("Comments", (string)null);
+                    b.ToTable("Comments");
                 });
 
             modelBuilder.Entity("DevDash.model.Issue", b =>
@@ -128,7 +131,7 @@ namespace DevDash.Migrations
 
                     b.HasIndex("SprintId");
 
-                    b.ToTable("Issues", (string)null);
+                    b.ToTable("Issues");
                 });
 
             modelBuilder.Entity("DevDash.model.IssueAssignedUser", b =>
@@ -204,7 +207,7 @@ namespace DevDash.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("PersonalTasks", (string)null);
+                    b.ToTable("PersonalTasks");
                 });
 
             modelBuilder.Entity("DevDash.model.PrivateNote", b =>
@@ -227,7 +230,7 @@ namespace DevDash.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("PrivateNotes", (string)null);
+                    b.ToTable("PrivateNotes");
                 });
 
             modelBuilder.Entity("DevDash.model.Project", b =>
@@ -280,7 +283,7 @@ namespace DevDash.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.ToTable("Projects", (string)null);
+                    b.ToTable("Projects");
                 });
 
             modelBuilder.Entity("DevDash.model.Sprint", b =>
@@ -329,7 +332,7 @@ namespace DevDash.Migrations
 
                     b.HasIndex("ProjectId");
 
-                    b.ToTable("Sprints", (string)null);
+                    b.ToTable("Sprints");
                 });
 
             modelBuilder.Entity("DevDash.model.Tenant", b =>
@@ -373,7 +376,7 @@ namespace DevDash.Migrations
                     b.HasIndex("TenantCode")
                         .IsUnique();
 
-                    b.ToTable("Tenants", (string)null);
+                    b.ToTable("Tenants");
                 });
 
             modelBuilder.Entity("DevDash.model.User", b =>
@@ -410,9 +413,9 @@ namespace DevDash.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<DateTime>("JoinedDate")
+                    b.Property<DateOnly>("JoinedDate")
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2");
+                        .HasColumnType("date");
 
                     b.Property<DateTime?>("LastActiveDate")
                         .HasColumnType("datetime2");

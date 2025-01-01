@@ -19,21 +19,20 @@ namespace DevDash.model
 
         [Required]
         [StringLength(20, MinimumLength = 3)]
-        public override string UserName { get; set; } = string.Empty;
+        public override string UserName { get; set; }
 
         [Required]
         [MaxLength(255)]
-        public override string Email { get; set; } = string.Empty;
+        public override string Email { get; set; }
 
         public DateOnly? Birthday { get; set; }
 
         [Phone]
         [MaxLength(50)]
         [RegularExpression(@"^[0-9\+]{10,15}$")]
-        public override string PhoneNumber { get; set; } = string.Empty;
+        public override string PhoneNumber { get; set; }
 
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public DateTime JoinedDate { get; set; } = DateTime.Now;
+        public DateTime JoinedDate { get; set; } = DateTime.UtcNow; // Set default value
 
         public DateTime? LastActiveDate { get; set; }
 

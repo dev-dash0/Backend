@@ -1,5 +1,6 @@
 ﻿using DevDash.DTO;
 using DevDash.model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -104,11 +105,24 @@ namespace DevDash.Controllers
             return BadRequest(ModelState);
         }
 
-        //[HttpPost("Logout")] //Post api/Account/Logout
-        //public async Task<IActionResult> Logout()
-        //{
-        //    await userManager.SignOutAsync();
-        //    return Ok("Logged Out");
-        //}
+        [HttpPost("Logout")] // POST api/Account/Logout
+        public IActionResult Logout()
+        {
+            // Extract the token from the Authorization header
+            var authorizationHeader = Request.Headers["Authorization"].ToString();
+            if (string.IsNullOrEmpty(authorizationHeader) || !authorizationHeader.StartsWith("Bearer "))
+            {
+                return BadRequest(new { message = "Authorization header is missing or invalid" });
+            }
+
+            var token = authorizationHeader.Substring("Bearer ".Length).Trim();
+
+            // Add the token to the blacklist
+            var blacklistService = HttpContext.RequestServices.GetService<TokenBlacklistService>();
+            blacklistService?.AddTokenToBlacklist(token);
+
+            return Ok(new { message = "Logged out successfully" });
+        }
+
     }
 }

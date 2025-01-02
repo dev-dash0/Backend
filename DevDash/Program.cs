@@ -1,3 +1,4 @@
+using DevDash.Middleware;
 using DevDash.model;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
@@ -29,10 +30,6 @@ namespace DevDash
                     options.JsonSerializerOptions.Converters.Add(new DateOnlyJsonConverter());
                 });
 
-            //builder.Services.AddDbContext<AppDbContext>(options =>
-            //{
-            //    options.UseSqlServer(builder.Configuration.GetConnectionString("cs"));
-            //});
 
             builder.Services.AddIdentity<User, IdentityRole<int>>()
                 .AddEntityFrameworkStores<AppDbContext>();
@@ -58,6 +55,11 @@ namespace DevDash
                         IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
                     };
                 });
+            //------------------------------------------------------------------
+            builder.Services.AddMemoryCache();
+            builder.Services.AddSingleton<TokenBlacklistService>();
+            //------------------------------------------------------------------
+
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
@@ -80,8 +82,10 @@ namespace DevDash
 
             app.UseHttpsRedirection();
 
+
             app.UseAuthentication(); // Ensure authentication middleware is called before authorization
             app.UseAuthorization();
+            app.UseMiddleware<TokenBlacklistMiddleware>();
 
             app.UseCustomUnauthorizedResponse();
 

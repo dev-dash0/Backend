@@ -72,7 +72,6 @@ namespace DevDash.Controllers
                             new Claim(JwtRegisteredClaimNames.Name, userFromDb.UserName),
                             new Claim(JwtRegisteredClaimNames.Email, userFromDb.Email),
                             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // Unique identifier for the token 
-                            new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()), // When the token was issued
                         };
 
                         // Get user roles

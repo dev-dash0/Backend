@@ -25,7 +25,7 @@ namespace DevDash.model
         public int OwnerID { get; set; }
 
         // Navigation Properties
-        public required User Owner { get; set; }
+        public  User Owner { get; set; }
         public ICollection<User>? JoinedUsers { get; set; }
         public ICollection<UserTenant>? UserTenants { get; set; }
 

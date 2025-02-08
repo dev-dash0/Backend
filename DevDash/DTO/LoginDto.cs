@@ -2,7 +2,7 @@
 
 namespace DevDash.DTO
 {
-    public class LoginDto
+    public class LoginDTO
     {
         [Required]
         [EmailAddress]

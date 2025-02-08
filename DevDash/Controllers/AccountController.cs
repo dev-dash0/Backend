@@ -25,7 +25,7 @@ namespace DevDash.Controllers
         }
 
         [HttpPost("Register")] //Post api/Account/Register 
-        public async Task<IActionResult> Register([FromBody] RegisterDto UserFromRequest)
+        public async Task<IActionResult> Register([FromBody] RegisterDTO UserFromRequest)
         {
             if (ModelState.IsValid)
             {
@@ -54,7 +54,7 @@ namespace DevDash.Controllers
         }
 
         [HttpPost("Login")] //Post api/Account/Login 
-        public async Task<IActionResult> Login([FromBody] LoginDto userFromRequest)
+        public async Task<IActionResult> Login([FromBody] LoginDTO userFromRequest)
         {
             if (ModelState.IsValid)
             {

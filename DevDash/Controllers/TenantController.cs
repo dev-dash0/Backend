@@ -1,7 +1,11 @@
+using AutoMapper;
+using DevDash.DTO.Tenant;
 using DevDash.model;
+using DevDash.Repository.IRepository;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 
 namespace DevDash.Controllers
 {
@@ -9,96 +13,177 @@ namespace DevDash.Controllers
     [ApiController]
     public class TenantController : ControllerBase
     {
-        private readonly AppDbContext _context;
+        private readonly ITenantRepository _dbTenant;
+        private readonly IMapper _mapper;
+        private APIResponse _response;
 
-        public TenantController(AppDbContext context)
+        public TenantController(ITenantRepository tenantRepo,IMapper mapper)
         {
-            _context = context;
+            _dbTenant = tenantRepo;
+            _mapper = mapper;   
+            this._response = new APIResponse();
         }
 
-        // GET: api/Tenant
-        [HttpGet("GetTenants")]
-        [Authorize(AuthenticationSchemes = "Bearer")]
-        public IActionResult GetTenants()
+        [HttpGet]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        public async Task<ActionResult<APIResponse>> GetTenants()
         {
-            List<Tenant> tenants = _context.Tenants.ToList();
-            return Ok(tenants);
+            try
+            {
+                IEnumerable<Tenant> tenants = await _dbTenant.GetAllAsync(includeProperties: "Owner");
+                _response.Result = _mapper.Map<List<TenantDTO>>(tenants);
+                _response.StatusCode = HttpStatusCode.OK;
+
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages
+                     = new List<string>() { ex.ToString() };
+            }
+            return _response;
+
         }
 
-        // GET: api/Tenant/5
-        //[HttpGet("{id}")]
-        //public async Task<ActionResult<Tenant>> GetTenant(int id)
-        //{
-        //    var tenant = await _context.Tenants.FindAsync(id);
+        [HttpGet("{id:int}", Name = "GetTenant")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<APIResponse>> GetTenant(int id)
+        {
+            try
+            {
+                if (id == 0)
+                {
+                    _response.StatusCode = HttpStatusCode.BadRequest;
+                    return BadRequest(_response);
+                }
+                var tenant = await _dbTenant.GetAsync(u => u.Id == id);
+                if (tenant == null)
+                {
+                    _response.StatusCode = HttpStatusCode.NotFound;
+                    return NotFound(_response);
+                }
+                _response.Result = _mapper.Map<TenantDTO>(tenant);
+                _response.StatusCode = HttpStatusCode.OK;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages
+                     = new List<string>() { ex.ToString() };
+            }
+            return _response;
+        }
 
-        //    if (tenant == null)
-        //    {
-        //        return NotFound();
-        //    }
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<APIResponse>> CreateTenant([FromBody] TenantCreateDTO createDTO)
+        {
+            try
+            {
 
-        //    return tenant;
-        //}
+                //if (await _dbVilla.GetAsync(u => u.Id == createDTO.VillaID) == null)
+                //{
+                //    ModelState.AddModelError("ErrorMessages", "Villa ID is Invalid!");
+                //    return BadRequest(ModelState);
+                //}
+                
 
-        // POST: api/Tenant
-        //[HttpPost]
-        //public async Task<ActionResult<Tenant>> PostTenant(Tenant tenant)
-        //{
-        //    _context.Tenants.Add(tenant);
-        //    await _context.SaveChangesAsync();
+                if (createDTO == null)
+                {
+                    return BadRequest(createDTO);
+                }
 
-        //    return CreatedAtAction(nameof(GetTenant), new { id = tenant.Id }, tenant);
-        //}
+                Tenant tenant = _mapper.Map<Tenant>(createDTO);
 
-        //// PUT: api/Tenant/5
-        //[HttpPut("{id}")]
-        //public async Task<IActionResult> PutTenant(int id, Tenant tenant)
-        //{
-        //    if (id != tenant.Id)
-        //    {
-        //        return BadRequest();
-        //    }
 
-        //    _context.Entry(tenant).State = EntityState.Modified;
+                await _dbTenant.CreateAsync(tenant);
+                _response.Result = _mapper.Map<TenantDTO>(tenant);
+                _response.StatusCode = HttpStatusCode.Created;
+                return CreatedAtRoute("GetTenant", new { id = tenant.Id }, _response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages
+                     = new List<string>() { ex.ToString() };
+            }
+            return _response;
+        }
 
-        //    try
-        //    {
-        //        await _context.SaveChangesAsync();
-        //    }
-        //    catch (DbUpdateConcurrencyException)
-        //    {
-        //        if (!TenantExists(id))
-        //        {
-        //            return NotFound();
-        //        }
-        //        else
-        //        {
-        //            throw;
-        //        }
-        //    }
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [HttpDelete("{id:int}", Name = "DeleteTenant")]
+        public async Task<ActionResult<APIResponse>> DeleteTenant(int id)
+        {
+            try
+            {
+                if (id == 0)
+                {
+                    return BadRequest();
+                }
+                var tenant = await _dbTenant.GetAsync(u => u.Id == id);
+                if (tenant == null)
+                {
+                    return NotFound();
+                }
+                await _dbTenant.RemoveAsync(tenant);
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.IsSuccess = true;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages
+                     = new List<string>() { ex.ToString() };
+            }
+            return _response;
+        }
 
-        //    return NoContent();
-        //}
 
-        //// DELETE: api/Tenant/5
-        //[HttpDelete("{id}")]
-        //public async Task<IActionResult> DeleteTenant(int id)
-        //{
-        //    var tenant = await _context.Tenants.FindAsync(id);
-        //    if (tenant == null)
-        //    {
-        //        return NotFound();
-        //    }
 
-        //    _context.Tenants.Remove(tenant);
-        //    await _context.SaveChangesAsync();
+        [HttpPut("{id:int}", Name = "UpdateTenant")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public async Task<ActionResult<APIResponse>> UpdateTenant(int id, [FromBody] TenantUpdateDTO updateDTO)
+        {
+            try
+            {
+                if (updateDTO == null || id!=updateDTO.Id )
+                {
+                    return BadRequest();
+                }
+                var tenant = await _dbTenant.GetAsync(u => u.Id == updateDTO.Id);
+                if (tenant == null)
+                {
+                    ModelState.AddModelError("ErrorMessages", "Tenant ID is Invalid!");
+                    return BadRequest(ModelState);
+                }
 
-        //    return NoContent();
-        //}
+                _mapper.Map(updateDTO, tenant);
 
-        //private bool TenantExists(int id)
-        //{
-        //    return _context.Tenants.Any(e => e.Id == id);
-        //}
+                await _dbTenant.UpdateAsync(tenant);
+                _response.StatusCode = HttpStatusCode.NoContent;
+                _response.IsSuccess = true;
+                return Ok(_response);
+            }
+            catch (Exception ex)
+            {
+                _response.IsSuccess = false;
+                _response.ErrorMessages
+                     = new List<string>() { ex.ToString() };
+            }
+            return _response;
+        }
+
+
     }
 }
 

@@ -2,7 +2,7 @@
 
 namespace DevDash.DTO
 {
-    public class RegisterDto
+    public class RegisterDTO
     {
         [Required]
         [StringLength(20, MinimumLength = 3)]

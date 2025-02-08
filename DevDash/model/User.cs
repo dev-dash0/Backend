@@ -2,6 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace DevDash.model
 {
@@ -46,6 +47,7 @@ namespace DevDash.model
 
         public ICollection<PersonalTask>? PersonalTasks { get; set; }
         public ICollection<PrivateNote>? PrivateNotes { get; set; }
+        [JsonIgnore]
         public ICollection<Tenant>? OwnedTenants { get; set; }
         public ICollection<Tenant>? JoinedTenants { get; set; }
         public ICollection<UserTenant>? UserTenants { get; set; }

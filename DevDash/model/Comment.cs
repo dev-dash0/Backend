@@ -23,9 +23,13 @@ namespace DevDash.model
         public int? CreatedById { get; set; }
 
         public string? Name { get; set; }
+        [ForeignKey("TenantId")]
+        public int TenantId { get; set; }
+        [ForeignKey("ProjectId")]
+        public int ProjectId { get; set; }
 
-        // Navigation Properties
-        [Required]
+        public Tenant Tenant { get; set; }
+        public Project Project { get; set; }
         public required Issue Issue { get; set; }
 
         public  User? CreatedBy { get; set; }

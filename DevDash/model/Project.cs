@@ -32,6 +32,7 @@ namespace DevDash.model
         public string Priority { get; set; } = string.Empty;
 
         // Foreign Keys
+        [ForeignKey("TenantId")]
         public int TenantId { get; set; }
         public int? ProjectManagerId { get; set; }
 

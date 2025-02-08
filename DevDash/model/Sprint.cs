@@ -29,10 +29,14 @@ namespace DevDash.model
         [Required]
         public required int ProjectId { get; set; }
 
+        [ForeignKey("TenantId")]
+        public int TenantId { get; set; }
+
         // Navigation Properties
 
         public  User? CreatedBy { get; set; }
         public required Project Project { get; set; }
+        public Tenant Tenant { get; set; }
         public ICollection<Issue>? Issues { get; set; }
     }
 

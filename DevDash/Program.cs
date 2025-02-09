@@ -33,8 +33,10 @@ namespace DevDash
                 });
 
             builder.Services.AddScoped<ITenantRepository, TenantRepository>();
-
-
+            builder.Services.AddScoped<ISprintRepository, SprintRepository>();
+            builder.Services.AddScoped<ICommentRepository, CommentRepository>();
+            builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
+            builder.Services.AddScoped<IIssueRepository, IssueRepository>();
             builder.Services.AddAutoMapper(typeof(MappingConfig));
             //------------------------------------------------------------------
             // Add services to the container.

@@ -37,7 +37,7 @@ namespace DevDash.model
 
         public DateTime? LastActiveDate { get; set; }
 
-        public byte[]? Avatar { get; set; }
+        public string? ImageUrl { get; set; }
 
         public bool Verified { get; set; } = false;
 
@@ -52,7 +52,7 @@ namespace DevDash.model
         public ICollection<Tenant>? JoinedTenants { get; set; }
         public ICollection<UserTenant>? UserTenants { get; set; }
         public ICollection<Project>? ManagedProjects { get; set; }
-
+        public ICollection<Project>? CreatedProjects { get; set; }
         public ICollection<Project>? WorkingProjects { get; set; }
         public ICollection<UserProject>? UserProjects { get; set; }
 

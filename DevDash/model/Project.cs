@@ -35,12 +35,15 @@ namespace DevDash.model
         [ForeignKey("TenantId")]
         public int TenantId { get; set; }
         public int? ProjectManagerId { get; set; }
+        [ForeignKey("UserId")]
+        public int CreatorId { get; set; }
 
 
         // Navigation Properties
         public User? Manager { get; set; }
         public Tenant Tenant { get; set; }
-        public ICollection<User>? Users { get; set; }   
+        public ICollection<User>? Users { get; set; }
+        public User Creator { get; set; }
         public ICollection<UserProject>? UserProjects { get; set; }
 
         public ICollection<Sprint>? Sprints { get; set; }

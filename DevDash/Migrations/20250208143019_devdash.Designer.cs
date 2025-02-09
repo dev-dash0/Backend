@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DevDash.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250208143019_devdash")]
+    partial class devdash
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -39,8 +42,7 @@ namespace DevDash.Migrations
 
                     b.Property<DateTime>("CreationDate")
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("IssueId")
                         .HasColumnType("int");
@@ -49,9 +51,6 @@ namespace DevDash.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ProjectId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SprintId")
                         .HasColumnType("int");
 
                     b.Property<int>("TenantId")
@@ -64,8 +63,6 @@ namespace DevDash.Migrations
                     b.HasIndex("IssueId");
 
                     b.HasIndex("ProjectId");
-
-                    b.HasIndex("SprintId");
 
                     b.HasIndex("TenantId");
 
@@ -85,8 +82,7 @@ namespace DevDash.Migrations
 
                     b.Property<DateTime>("CreationDate")
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasColumnType("datetime2");
 
                     b.Property<DateOnly?>("Deadline")
                         .HasColumnType("date");
@@ -262,11 +258,7 @@ namespace DevDash.Migrations
 
                     b.Property<DateTime>("CreationDate")
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<int>("CreatorId")
-                        .HasColumnType("int");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -302,8 +294,6 @@ namespace DevDash.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatorId");
-
                     b.HasIndex("ProjectManagerId");
 
                     b.HasIndex("TenantId");
@@ -321,8 +311,7 @@ namespace DevDash.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
@@ -377,8 +366,8 @@ namespace DevDash.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Image")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<byte[]>("Image")
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("Keywords")
                         .HasMaxLength(255)
@@ -421,6 +410,9 @@ namespace DevDash.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
+                    b.Property<byte[]>("Avatar")
+                        .HasColumnType("varbinary(max)");
+
                     b.Property<DateOnly?>("Birthday")
                         .HasColumnType("date");
 
@@ -440,9 +432,6 @@ namespace DevDash.Migrations
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("JoinedDate")
                         .HasColumnType("datetime2");
@@ -723,12 +712,6 @@ namespace DevDash.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DevDash.model.Sprint", "Sprint")
-                        .WithMany()
-                        .HasForeignKey("SprintId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("DevDash.model.Tenant", "Tenant")
                         .WithMany()
                         .HasForeignKey("TenantId")
@@ -740,8 +723,6 @@ namespace DevDash.Migrations
                     b.Navigation("Issue");
 
                     b.Navigation("Project");
-
-                    b.Navigation("Sprint");
 
                     b.Navigation("Tenant");
                 });
@@ -822,12 +803,6 @@ namespace DevDash.Migrations
 
             modelBuilder.Entity("DevDash.model.Project", b =>
                 {
-                    b.HasOne("DevDash.model.User", "Creator")
-                        .WithMany("CreatedProjects")
-                        .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("DevDash.model.User", "Manager")
                         .WithMany("ManagedProjects")
                         .HasForeignKey("ProjectManagerId")
@@ -838,8 +813,6 @@ namespace DevDash.Migrations
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("Creator");
 
                     b.Navigation("Manager");
 
@@ -1003,8 +976,6 @@ namespace DevDash.Migrations
             modelBuilder.Entity("DevDash.model.User", b =>
                 {
                     b.Navigation("Comments");
-
-                    b.Navigation("CreatedProjects");
 
                     b.Navigation("IssueAssignedUsers");
 

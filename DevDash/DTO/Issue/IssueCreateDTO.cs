@@ -1,13 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
+﻿using DevDash.DTO.Comment;
+using DevDash.DTO.User;
+using DevDash.model;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace DevDash.model
+namespace DevDash.DTO.Issue
 {
-    public class Issue
+    public class IssueCreataDTO
     {
-        [Key]
-        public int Id { get; set; }
 
         [Required]
         [MaxLength(255)]
@@ -15,22 +15,11 @@ namespace DevDash.model
 
         [MaxLength(255)]
         public string? Description { get; set; }
-
         public bool IsBacklog { get; set; } = true;
-
-        [MaxLength(255)]
-        public string? Labels { get; set; }
-
-        [Required]
-        [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public DateTime CreationDate { get; set; }
-
+        public DateTime? CreationDate { get; set; } = DateTime.Now;
         public DateOnly? StartDate { get; set; }
-
         public DateOnly? Deadline { get; set; }
-
         public DateOnly? DeliveredDate { get; set; }
-
         public DateTime? LastUpdate { get; set; }
 
         [MaxLength(20)]
@@ -48,31 +37,14 @@ namespace DevDash.model
         [RegularExpression("BackLog|to do|In Progress|Reviewing|Completed|Canceled|Postponed")]
         public required string Status { get; set; }
 
-        //Foreign Keys
-
-        public int? SprintId { get; set; } // Made nullable to allow setting to null
-
-        [Required]
-        [ForeignKey("ProjectId")]
-        public required int ProjectId { get; set; }
-        [ForeignKey("TenantId")]
+        public int? CreatedById { get; set; }
         public int TenantId { get; set; }
+        [ForeignKey("ProjectId")]
+        public int ProjectId { get; set; }
+        public int? SprintId { get; set; }
 
-        [ForeignKey("UserId")]
-        public  int? CreatedById { get; set; }
-
-        // Navigation Properties
-        public Sprint? Sprint { get; set; }
-        public required Project Project { get; set; }
-
-        public  User? CreatedBy { get; set; }
-        public Tenant Tenant { get; set; }
-
-        public ICollection<User>? AssignedUsers { get; set; }
-
-        public ICollection<IssueAssignedUser>? IssueAssignedUsers { get; set; }
-
-        public ICollection<Comment>? Comments { get; set; }
+        public ICollection<UserDTO>? AssignedUsers { get; set; }
+        //public ICollection<CommentDTO>? Comments { get; set; }
 
     }
 }

@@ -17,7 +17,7 @@ namespace DevDash.model
         public string? TenantUrl { get; set; }
         [MaxLength(255)]
         public string? Keywords { get; set; }
-        public byte[]? Image { get; set; }
+        public string? Image { get; set; }
         //Foreign Keys
 
         [ForeignKey(nameof(User.Id))]

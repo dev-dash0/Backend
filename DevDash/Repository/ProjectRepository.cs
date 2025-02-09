@@ -1,5 +1,6 @@
 ﻿using DevDash.model;
 using DevDash.Repository.IRepository;
+using Microsoft.EntityFrameworkCore;
 
 namespace DevDash.Repository
 {
@@ -13,18 +14,25 @@ namespace DevDash.Repository
 
         public async Task<Project> UpdateAsync(Project project)
         {
-            var projectFromDb = _db.Projects.FirstOrDefault(u=>u.Id == project.Id);
-            if (projectFromDb != null)
-            {
-                projectFromDb.Name = project.Name;
-                projectFromDb.Description = project.Description;
-                projectFromDb.StartDate = project.StartDate;
-                projectFromDb.EndDate = project.EndDate;
-                projectFromDb.Priority = project.Priority;
-                projectFromDb.Status = project.Status;
-            }
+            _db.Projects.Update(project);
             await _db.SaveChangesAsync();
             return project;
         }
+        public async Task RemoveAsync(Project project)
+        {
+            var commentsToRemove = await _db.Comments.Where(u => u.ProjectId == project.Id).ToListAsync();
+            _db.Comments.RemoveRange(commentsToRemove);
+
+            var IssuesToRemove = await _db.Issues.Where(u => u.ProjectId == project.Id).ToListAsync();
+            _db.Issues.RemoveRange(IssuesToRemove);
+
+            var SprintsToRemove = await _db.Sprints.Where(u => u.ProjectId == project.Id).ToListAsync();
+            _db.Sprints.RemoveRange(SprintsToRemove);
+
+            _db.Projects.Remove(project);
+
+            await _db.SaveChangesAsync();
+        }
+
     }
 }

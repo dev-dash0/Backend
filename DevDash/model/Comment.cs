@@ -17,7 +17,7 @@ namespace DevDash.model
         public required string Content { get; set; }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public DateTime CreationDate { get; set; }
+        public DateTime CreationDate { get; set; } = DateTime.Now;
 
         [ForeignKey("CreatedBy")]
         public int? CreatedById { get; set; }
@@ -28,6 +28,10 @@ namespace DevDash.model
         [ForeignKey("ProjectId")]
         public int ProjectId { get; set; }
 
+        [ForeignKey("SprintId")]
+        public int SprintId { get; set; }
+
+        public Sprint Sprint { get; set; }
         public Tenant Tenant { get; set; }
         public Project Project { get; set; }
         public required Issue Issue { get; set; }

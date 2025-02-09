@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using DevDash.DTO.Project;
+using DevDash.DTO.Sprint;
 using DevDash.DTO.Tenant;
+using DevDash.Migrations;
 using DevDash.model;
 using DevDash.Repository.IRepository;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -11,31 +11,27 @@ namespace DevDash.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProjectController : ControllerBase
+    public class SprintController : Controller
     {
-        private readonly IProjectRepository _dbProject;
-        private readonly ITenantRepository _dbTenant;
+        private readonly ISprintRepository _dbSprint;
         private readonly IMapper _mapper;
         private APIResponse _response;
 
-        public ProjectController(IProjectRepository dbProject,ITenantRepository dbTenant ,IMapper mapper)
+        public SprintController(ISprintRepository tenantRepo, IMapper mapper)
         {
-            _dbTenant = dbTenant;
-            _dbProject = dbProject;
+            _dbSprint = tenantRepo;
             _mapper = mapper;
             this._response = new APIResponse();
         }
-
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<APIResponse>> GetProjects()
+        public async Task<ActionResult<APIResponse>> GetSprints()
         {
             try
             {
-                IEnumerable<Project> projects = await _dbProject.GetAllAsync(includeProperties: "Tenant");
-                _response.Result = _mapper.Map<List<ProjectDTO>>(projects);
+                IEnumerable<Sprint> Sprints = await _dbSprint.GetAllAsync();
+                _response.Result = _mapper.Map<List<SprintDTO>>(Sprints);
                 _response.StatusCode = HttpStatusCode.OK;
-
                 return Ok(_response);
             }
             catch (Exception ex)
@@ -45,14 +41,13 @@ namespace DevDash.Controllers
                      = new List<string>() { ex.ToString() };
             }
             return _response;
-
         }
 
-        [HttpGet("{id:int}", Name = "GetProject")]
+        [HttpGet("{id:int}", Name = "GetSprint")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> GetProject(int id)
+        public async Task<ActionResult<APIResponse>> GetSprint(int id)
         {
             try
             {
@@ -61,13 +56,13 @@ namespace DevDash.Controllers
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
-                var model = await _dbProject.GetAsync(u => u.Id == id);
-                if (model == null)
+                var Sprint = await _dbSprint.GetAsync(u => u.Id == id);
+                if (Sprint == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound(_response);
                 }
-                _response.Result = _mapper.Map<ProjectDTO>(model);
+                _response.Result = _mapper.Map<SprintDTO>(Sprint);
                 _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);
             }
@@ -84,38 +79,32 @@ namespace DevDash.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> CreateProject([FromBody] ProjectCreateDTO createDTO)
+        public async Task<ActionResult<APIResponse>> CreateSprint([FromBody] SprintCreateDTO createDTO)
         {
             try
             {
-
-                if (await _dbTenant.GetAsync(u => u.Id == createDTO.TenantId) == null )
-                {
-                    ModelState.AddModelError("ErrorMessages", "Tenant ID is Invalid!");
-                    return BadRequest(ModelState);
-                }
-
-                if (createDTO.CreationDate == default)
-                {
-                    createDTO.CreationDate = DateTime.UtcNow;
-                }
 
                 if (createDTO == null)
                 {
                     return BadRequest(createDTO);
                 }
-
-                Project project = _mapper.Map<Project>(createDTO);
-
-                if (project.CreationDate == default)
+                if (createDTO.CreatedAt==default)
                 {
-                    project.CreationDate = DateTime.UtcNow;
+                    createDTO.CreatedAt = DateTime.UtcNow;
                 }
 
-                await _dbProject.CreateAsync(project);
-                _response.Result = _mapper.Map<ProjectDTO>(project);
+                Sprint Sprint = _mapper.Map<Sprint>(createDTO);
+
+
+                await _dbSprint.CreateAsync(Sprint);
+                _response.Result = _mapper.Map<SprintDTO>(Sprint);
                 _response.StatusCode = HttpStatusCode.Created;
-                return CreatedAtRoute("GetProject", new { id = project.Id }, _response);
+                if (Sprint.CreatedAt == default)
+                {
+                    createDTO.CreatedAt = DateTime.UtcNow;
+                }
+               
+                return CreatedAtRoute("GetSprint", new { id = Sprint.Id }, _response);
             }
             catch (Exception ex)
             {
@@ -129,8 +118,8 @@ namespace DevDash.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [HttpDelete("{id:int}", Name = "DeleteProject")]
-        public async Task<ActionResult<APIResponse>> DeleteProject(int id)
+        [HttpDelete("{id:int}", Name = "DeleteSprint")]
+        public async Task<ActionResult<APIResponse>> DeleteSprint(int id)
         {
             try
             {
@@ -138,12 +127,12 @@ namespace DevDash.Controllers
                 {
                     return BadRequest();
                 }
-                var project = await _dbProject.GetAsync(u => u.Id == id);
-                if (project == null)
+                var tenant = await _dbSprint.GetAsync(u => u.Id == id);
+                if (tenant == null)
                 {
                     return NotFound();
                 }
-                await _dbProject.RemoveAsync(project);
+                await _dbSprint.RemoveAsync(tenant);
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.IsSuccess = true;
                 return Ok(_response);
@@ -159,10 +148,10 @@ namespace DevDash.Controllers
 
 
 
-        [HttpPut("{id:int}", Name = "UpdateProject")]
+        [HttpPut("{id:int}", Name = "UpdateSprint")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> UpdateProject(int id, [FromBody] ProjectUpdateDTO updateDTO)
+        public async Task<ActionResult<APIResponse>> UpdateSprint(int id, [FromBody] SprintUpdateDTO updateDTO)
         {
             try
             {
@@ -170,16 +159,19 @@ namespace DevDash.Controllers
                 {
                     return BadRequest();
                 }
-                var project = await _dbProject.GetAsync(u => u.Id == updateDTO.Id);
-                if (project == null)
+
+               
+               
+                var tenant = await _dbSprint.GetAsync(u => u.Id == updateDTO.Id);
+                if (tenant == null)
                 {
-                    ModelState.AddModelError("ErrorMessages", "Tenant ID is Invalid!");
+                    ModelState.AddModelError("ErrorMessages", "Sprint ID is Invalid!");
                     return BadRequest(ModelState);
                 }
 
-                _mapper.Map(updateDTO, project);
+                _mapper.Map(updateDTO, tenant);
 
-                await _dbProject.UpdateAsync(project);
+                await _dbSprint.UpdateAsync(tenant);
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.IsSuccess = true;
                 return Ok(_response);
@@ -192,7 +184,6 @@ namespace DevDash.Controllers
             }
             return _response;
         }
-
 
 
 

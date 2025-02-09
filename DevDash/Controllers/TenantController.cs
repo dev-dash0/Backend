@@ -92,8 +92,6 @@ namespace DevDash.Controllers
                 //    ModelState.AddModelError("ErrorMessages", "Villa ID is Invalid!");
                 //    return BadRequest(ModelState);
                 //}
-                
-
                 if (createDTO == null)
                 {
                     return BadRequest(createDTO);
@@ -146,9 +144,6 @@ namespace DevDash.Controllers
             }
             return _response;
         }
-
-
-
         [HttpPut("{id:int}", Name = "UpdateTenant")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -182,8 +177,6 @@ namespace DevDash.Controllers
             }
             return _response;
         }
-
-
     }
 }
 

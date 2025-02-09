@@ -20,7 +20,7 @@ namespace DevDash.DTO.Tenant
         public string? TenantUrl { get; set; }
 
         public string? Keywords { get; set; }
-        public byte[]? Image { get; set; }
+        public string? Image { get; set; }
 
         [Required]
         public int OwnerID { get; set; }

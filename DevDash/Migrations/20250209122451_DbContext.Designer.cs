@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -10,9 +11,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DevDash.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250209122451_DbContext")]
+    partial class DbContext
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -85,8 +88,7 @@ namespace DevDash.Migrations
 
                     b.Property<DateTime>("CreationDate")
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasColumnType("datetime2");
 
                     b.Property<DateOnly?>("Deadline")
                         .HasColumnType("date");
@@ -262,11 +264,7 @@ namespace DevDash.Migrations
 
                     b.Property<DateTime>("CreationDate")
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<int>("CreatorId")
-                        .HasColumnType("int");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -301,8 +299,6 @@ namespace DevDash.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("CreatorId");
 
                     b.HasIndex("ProjectManagerId");
 
@@ -421,6 +417,9 @@ namespace DevDash.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
+                    b.Property<string>("Avatar")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateOnly?>("Birthday")
                         .HasColumnType("date");
 
@@ -440,9 +439,6 @@ namespace DevDash.Migrations
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("JoinedDate")
                         .HasColumnType("datetime2");
@@ -822,12 +818,6 @@ namespace DevDash.Migrations
 
             modelBuilder.Entity("DevDash.model.Project", b =>
                 {
-                    b.HasOne("DevDash.model.User", "Creator")
-                        .WithMany("CreatedProjects")
-                        .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("DevDash.model.User", "Manager")
                         .WithMany("ManagedProjects")
                         .HasForeignKey("ProjectManagerId")
@@ -838,8 +828,6 @@ namespace DevDash.Migrations
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("Creator");
 
                     b.Navigation("Manager");
 
@@ -1003,8 +991,6 @@ namespace DevDash.Migrations
             modelBuilder.Entity("DevDash.model.User", b =>
                 {
                     b.Navigation("Comments");
-
-                    b.Navigation("CreatedProjects");
 
                     b.Navigation("IssueAssignedUsers");
 

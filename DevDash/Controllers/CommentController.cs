@@ -1,9 +1,9 @@
 ﻿using AutoMapper;
-using DevDash.DTO.Project;
-using DevDash.DTO.Tenant;
+using DevDash.DTO.Comment;
+using DevDash.DTO.Sprint;
+using DevDash.Migrations;
 using DevDash.model;
 using DevDash.Repository.IRepository;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -11,31 +11,27 @@ namespace DevDash.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class ProjectController : ControllerBase
+    public class CommentController : Controller
     {
-        private readonly IProjectRepository _dbProject;
-        private readonly ITenantRepository _dbTenant;
+        private readonly ICommentRepository _dbComment;
         private readonly IMapper _mapper;
         private APIResponse _response;
 
-        public ProjectController(IProjectRepository dbProject,ITenantRepository dbTenant ,IMapper mapper)
+        public CommentController(ICommentRepository commentRepo, IMapper mapper)
         {
-            _dbTenant = dbTenant;
-            _dbProject = dbProject;
+            _dbComment = commentRepo;
             _mapper = mapper;
             this._response = new APIResponse();
         }
-
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<ActionResult<APIResponse>> GetProjects()
+        public async Task<ActionResult<APIResponse>> GetComments()
         {
             try
             {
-                IEnumerable<Project> projects = await _dbProject.GetAllAsync(includeProperties: "Tenant");
-                _response.Result = _mapper.Map<List<ProjectDTO>>(projects);
+                IEnumerable<Comment> Comments = await _dbComment.GetAllAsync();
+                _response.Result = _mapper.Map<List<CommentDTO>>(Comments);
                 _response.StatusCode = HttpStatusCode.OK;
-
                 return Ok(_response);
             }
             catch (Exception ex)
@@ -45,14 +41,14 @@ namespace DevDash.Controllers
                      = new List<string>() { ex.ToString() };
             }
             return _response;
-
         }
 
-        [HttpGet("{id:int}", Name = "GetProject")]
+
+        [HttpGet("{id:int}", Name = "GetComment")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<APIResponse>> GetProject(int id)
+        public async Task<ActionResult<APIResponse>> GetComment(int id)
         {
             try
             {
@@ -61,13 +57,13 @@ namespace DevDash.Controllers
                     _response.StatusCode = HttpStatusCode.BadRequest;
                     return BadRequest(_response);
                 }
-                var model = await _dbProject.GetAsync(u => u.Id == id);
-                if (model == null)
+                var Comment = await _dbComment.GetAsync(u => u.Id == id);
+                if (Comment == null)
                 {
                     _response.StatusCode = HttpStatusCode.NotFound;
                     return NotFound(_response);
                 }
-                _response.Result = _mapper.Map<ProjectDTO>(model);
+                _response.Result = _mapper.Map<CommentDTO>(Comment);
                 _response.StatusCode = HttpStatusCode.OK;
                 return Ok(_response);
             }
@@ -84,38 +80,32 @@ namespace DevDash.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<APIResponse>> CreateProject([FromBody] ProjectCreateDTO createDTO)
+        public async Task<ActionResult<APIResponse>> CreateComment([FromBody] CommentCreateDTO createDTO)
         {
             try
             {
-
-                if (await _dbTenant.GetAsync(u => u.Id == createDTO.TenantId) == null )
-                {
-                    ModelState.AddModelError("ErrorMessages", "Tenant ID is Invalid!");
-                    return BadRequest(ModelState);
-                }
-
-                if (createDTO.CreationDate == default)
-                {
-                    createDTO.CreationDate = DateTime.UtcNow;
-                }
 
                 if (createDTO == null)
                 {
                     return BadRequest(createDTO);
                 }
-
-                Project project = _mapper.Map<Project>(createDTO);
-
-                if (project.CreationDate == default)
+                if (createDTO.CreationDate == default)
                 {
-                    project.CreationDate = DateTime.UtcNow;
+                    createDTO.CreationDate = DateTime.UtcNow;
                 }
 
-                await _dbProject.CreateAsync(project);
-                _response.Result = _mapper.Map<ProjectDTO>(project);
+                Comment comment = _mapper.Map<Comment>(createDTO);
+
+
+                await _dbComment.CreateAsync(comment);
+                _response.Result = _mapper.Map<CommentDTO>(comment);
                 _response.StatusCode = HttpStatusCode.Created;
-                return CreatedAtRoute("GetProject", new { id = project.Id }, _response);
+                if (comment.CreationDate == default)
+                {
+                    createDTO.CreationDate = DateTime.UtcNow;
+                }
+
+                return CreatedAtRoute("GetComment", new { id = comment.Id }, _response);
             }
             catch (Exception ex)
             {
@@ -129,8 +119,8 @@ namespace DevDash.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [HttpDelete("{id:int}", Name = "DeleteProject")]
-        public async Task<ActionResult<APIResponse>> DeleteProject(int id)
+        [HttpDelete("{id:int}", Name = "DeleteComment")]
+        public async Task<ActionResult<APIResponse>> DeleteComment(int id)
         {
             try
             {
@@ -138,12 +128,13 @@ namespace DevDash.Controllers
                 {
                     return BadRequest();
                 }
-                var project = await _dbProject.GetAsync(u => u.Id == id);
-                if (project == null)
+                var comment = await _dbComment.GetAsync(u => u.Id == id);
+                if (comment == null)
                 {
                     return NotFound();
                 }
-                await _dbProject.RemoveAsync(project);
+
+                await _dbComment.RemoveAsync(comment);
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.IsSuccess = true;
                 return Ok(_response);
@@ -157,12 +148,10 @@ namespace DevDash.Controllers
             return _response;
         }
 
-
-
-        [HttpPut("{id:int}", Name = "UpdateProject")]
+        [HttpPut("{id:int}", Name = "UpdateComment")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<ActionResult<APIResponse>> UpdateProject(int id, [FromBody] ProjectUpdateDTO updateDTO)
+        public async Task<ActionResult<APIResponse>> UpdateComment(int id, [FromBody] CommentUpdateDTO updateDTO)
         {
             try
             {
@@ -170,16 +159,19 @@ namespace DevDash.Controllers
                 {
                     return BadRequest();
                 }
-                var project = await _dbProject.GetAsync(u => u.Id == updateDTO.Id);
-                if (project == null)
+
+
+
+                var comment = await _dbComment.GetAsync(u => u.Id == updateDTO.Id);
+                if (comment == null)
                 {
-                    ModelState.AddModelError("ErrorMessages", "Tenant ID is Invalid!");
+                    ModelState.AddModelError("ErrorMessages", "Comment ID is Invalid!");
                     return BadRequest(ModelState);
                 }
 
-                _mapper.Map(updateDTO, project);
+                _mapper.Map(updateDTO, comment);
 
-                await _dbProject.UpdateAsync(project);
+                await _dbComment.UpdateAsync(comment);
                 _response.StatusCode = HttpStatusCode.NoContent;
                 _response.IsSuccess = true;
                 return Ok(_response);

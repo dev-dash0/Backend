@@ -17,15 +17,23 @@ namespace DevDash.model
         public required string Content { get; set; }
 
         [DatabaseGenerated(DatabaseGeneratedOption.Computed)]
-        public DateTime CreationDate { get; set; }
+        public DateTime CreationDate { get; set; } = DateTime.Now;
 
         [ForeignKey("CreatedBy")]
         public int? CreatedById { get; set; }
 
         public string? Name { get; set; }
+        [ForeignKey("TenantId")]
+        public int TenantId { get; set; }
+        [ForeignKey("ProjectId")]
+        public int ProjectId { get; set; }
 
-        // Navigation Properties
-        [Required]
+        [ForeignKey("SprintId")]
+        public int SprintId { get; set; }
+
+        public Sprint Sprint { get; set; }
+        public Tenant Tenant { get; set; }
+        public Project Project { get; set; }
         public required Issue Issue { get; set; }
 
         public  User? CreatedBy { get; set; }

@@ -86,6 +86,13 @@ public class AppDbContext : IdentityDbContext<User, IdentityRole<int>, int>
             .HasForeignKey(p => p.ProjectManagerId)
             .OnDelete(DeleteBehavior.SetNull); // If a Manager is deleted, their Projects' ManagerId is set to null.
 
+        // User-Project One-To-Many Relationship
+        modelBuilder.Entity<User>()
+            .HasMany(u => u.CreatedProjects)
+            .WithOne(p => p.Creator)
+            .HasForeignKey(p => p.CreatorId)
+            .OnDelete(DeleteBehavior.Restrict); // If a Creator is deleted, their Projects' ManagerId is set to null.
+
         // User-Project Many-To-Many Relationship (UserProject entity)
         modelBuilder.Entity<User>()
           .HasMany(u => u.WorkingProjects) 
@@ -194,6 +201,21 @@ public class AppDbContext : IdentityDbContext<User, IdentityRole<int>, int>
         modelBuilder.Entity<Tenant>()
             .HasIndex(t => t.TenantCode)
             .IsUnique(); // Ensure tenant code is unique.
+        modelBuilder.Entity<Sprint>()
+             .Property(p => p.CreatedAt)
+             .HasDefaultValueSql("GETUTCDATE()");
+        modelBuilder.Entity<Comment>()
+           .Property(p => p.CreationDate)
+           .HasDefaultValueSql("GETUTCDATE()");
+
+
+        modelBuilder.Entity<Project>()
+      .Property(p => p.CreationDate)
+      .HasDefaultValueSql("GETUTCDATE()");
+
+        modelBuilder.Entity<Issue>()
+        .Property(p => p.CreationDate)
+        .HasDefaultValueSql("GETUTCDATE()");
 
         //modelBuilder.Entity<Integration>()
         //    .HasIndex(i => i.Name)

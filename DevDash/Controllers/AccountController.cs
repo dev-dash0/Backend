@@ -1,5 +1,6 @@
 ﻿using DevDash.DTO;
 using DevDash.model;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
@@ -24,7 +25,11 @@ namespace DevDash.Controllers
         }
 
         [HttpPost("Register")] //Post api/Account/Register 
-        public async Task<IActionResult> Register([FromBody] RegisterDto UserFromRequest)
+
+        public async Task<IActionResult> Register([FromBody] RegisterDTO UserFromRequest)
+
+       
+
         {
             if (ModelState.IsValid)
             {
@@ -53,7 +58,9 @@ namespace DevDash.Controllers
         }
 
         [HttpPost("Login")] //Post api/Account/Login 
-        public async Task<IActionResult> Login([FromBody] LoginDto userFromRequest)
+
+        public async Task<IActionResult> Login([FromBody] LoginDTO userFromRequest)
+
         {
             if (ModelState.IsValid)
             {
@@ -72,7 +79,8 @@ namespace DevDash.Controllers
                             new Claim(JwtRegisteredClaimNames.Name, userFromDb.UserName),
                             new Claim(JwtRegisteredClaimNames.Email, userFromDb.Email),
                             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // Unique identifier for the token 
-                            new Claim(JwtRegisteredClaimNames.Iat, DateTime.UtcNow.ToString()), // When the token was issued
+
+                            
                         };
 
                         // Get user roles
@@ -84,7 +92,7 @@ namespace DevDash.Controllers
 
                         var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]));
 
-                        // Design Toketn
+
                         JwtSecurityToken token = new JwtSecurityToken(
                             issuer: configuration["JWT:ValidIssuer"],
                             audience: configuration["JWT:ValidAudience"],
@@ -95,7 +103,9 @@ namespace DevDash.Controllers
 
                         return Ok(new
                         {
-                            n = new JwtSecurityTokenHandler().WriteToken(token),
+
+                            token = new JwtSecurityTokenHandler().WriteToken(token),
+
                             expiration = token.ValidTo
                         });
                     }
@@ -103,6 +113,28 @@ namespace DevDash.Controllers
                 ModelState.AddModelError("Email", "Invalid Email or Password");
             }
             return BadRequest(ModelState);
+
         }
+
+        [HttpPost("Logout")] // POST api/Account/Logout
+        public IActionResult Logout()
+        {
+            // Extract the token from the Authorization header
+            var authorizationHeader = Request.Headers["Authorization"].ToString();
+            if (string.IsNullOrEmpty(authorizationHeader) || !authorizationHeader.StartsWith("Bearer "))
+            {
+                return BadRequest(new { message = "Authorization header is missing or invalid" });
+            }
+
+            var token = authorizationHeader.Substring("Bearer ".Length).Trim();
+
+            // Add the token to the blacklist
+            var blacklistService = HttpContext.RequestServices.GetService<TokenBlacklistService>();
+            blacklistService?.AddTokenToBlacklist(token);
+
+            return Ok(new { message = "Logged out successfully" });
+
+        }
+
     }
 }

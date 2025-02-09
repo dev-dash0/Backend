@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace DevDash.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241228212731_addComment")]
-    partial class addComment
+    [Migration("20241229120051_NewDevDash")]
+    partial class NewDevDash
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)

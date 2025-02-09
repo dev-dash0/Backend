@@ -6,6 +6,7 @@ namespace DevDash.DTO
     {
         [Required]
         [StringLength(20, MinimumLength = 3)]
+
         public string FirstName { get; set; }
 
         [Required]
@@ -29,6 +30,14 @@ namespace DevDash.DTO
         [Phone]
         public string PhoneNumber { get; set; }
 
+
+
         public DateOnly? Birthday { get; set; }
+
+        [Phone]
+        [MaxLength(50)]
+        //[RegularExpression(@"^[0-9\+]{10,15}$")]
+        [Required(ErrorMessage = "Phone number is required.")]
+        public  string PhoneNumber { get; set; } = string.Empty;
     }
 }

@@ -2,7 +2,9 @@
 using Microsoft.EntityFrameworkCore;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+
 using System.Text.Json.Serialization;
+
 
 namespace DevDash.model
 {
@@ -30,10 +32,12 @@ namespace DevDash.model
 
         [Phone]
         [MaxLength(50)]
+
         [RegularExpression(@"^[0-9\+]{10,15}$")]
         public override string PhoneNumber { get; set; }
 
         public DateTime JoinedDate { get; set; } = DateTime.UtcNow; // Set default value
+
 
         public DateTime? LastActiveDate { get; set; }
 
@@ -42,7 +46,9 @@ namespace DevDash.model
         public bool Verified { get; set; } = false;
 
         public String? Personality { get; set; }
-
+      
+        
+    
         // Navigation Properties
 
         public ICollection<PersonalTask>? PersonalTasks { get; set; }

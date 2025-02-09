@@ -25,7 +25,11 @@ namespace DevDash.Controllers
         }
 
         [HttpPost("Register")] //Post api/Account/Register 
+
         public async Task<IActionResult> Register([FromBody] RegisterDTO UserFromRequest)
+
+       
+
         {
             if (ModelState.IsValid)
             {
@@ -33,7 +37,7 @@ namespace DevDash.Controllers
                 {
                     FirstName = UserFromRequest.FirstName,
                     LastName = UserFromRequest.LastName,
-                    UserName = UserFromRequest.Username,
+                    UserName = UserFromRequest.UserName,
                     Email = UserFromRequest.Email,
                     PhoneNumber = UserFromRequest.PhoneNumber,
                     Birthday = UserFromRequest.Birthday,
@@ -54,7 +58,9 @@ namespace DevDash.Controllers
         }
 
         [HttpPost("Login")] //Post api/Account/Login 
+
         public async Task<IActionResult> Login([FromBody] LoginDTO userFromRequest)
+
         {
             if (ModelState.IsValid)
             {
@@ -73,6 +79,8 @@ namespace DevDash.Controllers
                             new Claim(JwtRegisteredClaimNames.Name, userFromDb.UserName),
                             new Claim(JwtRegisteredClaimNames.Email, userFromDb.Email),
                             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()), // Unique identifier for the token 
+
+                            
                         };
 
                         // Get user roles
@@ -84,7 +92,7 @@ namespace DevDash.Controllers
 
                         var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JWT:Secret"]));
 
-                        // Design Token
+
                         JwtSecurityToken token = new JwtSecurityToken(
                             issuer: configuration["JWT:ValidIssuer"],
                             audience: configuration["JWT:ValidAudience"],
@@ -95,7 +103,9 @@ namespace DevDash.Controllers
 
                         return Ok(new
                         {
+
                             token = new JwtSecurityTokenHandler().WriteToken(token),
+
                             expiration = token.ValidTo
                         });
                     }
@@ -103,6 +113,7 @@ namespace DevDash.Controllers
                 ModelState.AddModelError("Email", "Invalid Email or Password");
             }
             return BadRequest(ModelState);
+
         }
 
         [HttpPost("Logout")] // POST api/Account/Logout
@@ -122,6 +133,7 @@ namespace DevDash.Controllers
             blacklistService?.AddTokenToBlacklist(token);
 
             return Ok(new { message = "Logged out successfully" });
+
         }
 
     }

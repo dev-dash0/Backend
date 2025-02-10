@@ -2,16 +2,15 @@
 
 namespace DevDash.DTO
 {
-
-    public class LoginDTO
+    public class LoginDto
     {
-        [Required]
-        [EmailAddress]
-        public string Email { get; set; }
 
         [Required]
-        [StringLength(100, MinimumLength = 6, ErrorMessage = "Password must be at least 6 characters long.")]
-        [RegularExpression(@"^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).+$", ErrorMessage = "Password must contain at least one uppercase letter, one lowercase letter, and one number.")]
+        [MaxLength(255)]
+        [EmailAddress]
+        public string Email { get; set; } = string.Empty;
+
+        [Required]
         public string Password { get; set; }
 
     }

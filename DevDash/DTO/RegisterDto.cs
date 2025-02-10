@@ -34,10 +34,11 @@ namespace DevDash.DTO
 
         public DateOnly? Birthday { get; set; }
 
-        [Phone]
-        [MaxLength(50)]
-        //[RegularExpression(@"^[0-9\+]{10,15}$")]
-        [Required(ErrorMessage = "Phone number is required.")]
-        public  string PhoneNumber { get; set; } = string.Empty;
+        //    [Phone]
+        //    [MaxLength(50)]
+        //    //[RegularExpression(@"^[0-9\+]{10,15}$")]
+        //    [Required(ErrorMessage = "Phone number is required.")]
+        //    public  string PhoneNumber { get; set; } = string.Empty;
+        //}
     }
 }

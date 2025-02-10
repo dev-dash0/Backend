@@ -43,6 +43,7 @@ namespace DevDash
             builder.Services.AddScoped<ICommentRepository, CommentRepository>();
             builder.Services.AddScoped<IProjectRepository, ProjectRepository>();
             builder.Services.AddScoped<IIssueRepository, IssueRepository>();
+
             builder.Services.AddAutoMapper(typeof(MappingConfig));
             //------------------------------------------------------------------
             // Add services to the container.
@@ -58,10 +59,10 @@ namespace DevDash
 
 
             builder.Services.AddAuthentication(options =>
-                {
-                    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-                })
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            })
                 .AddJwtBearer(options =>
                 {
                     options.RequireHttpsMetadata = false;
@@ -83,31 +84,6 @@ namespace DevDash
             builder.Services.AddMemoryCache();
             builder.Services.AddSingleton<TokenBlacklistService>();
             //------------------------------------------------------------------
-
-
-            builder.Services.AddAuthentication(options =>
-            {
-                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-            })
-                .AddJwtBearer(options =>
-                {
-                    options.TokenValidationParameters = new TokenValidationParameters
-                    {
-                        ValidateIssuer = true,
-                        ValidateAudience = true,
-                        ValidateLifetime = true,
-                        ValidateIssuerSigningKey = true,
-                        ValidIssuer = builder.Configuration["JWT:ValidIssuer"],
-                        ValidAudience = builder.Configuration["JWT:ValidAudience"],
-                        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
-                    };
-                });
-
-
-
-
-
 
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -161,9 +137,7 @@ namespace DevDash
             app.UseHttpsRedirection();
 
 
-
             app.UseAuthentication(); // Ensure authentication middleware is called before authorization
-
             app.UseAuthorization();
             app.UseMiddleware<TokenBlacklistMiddleware>();
 

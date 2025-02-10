@@ -37,7 +37,7 @@ namespace DevDash.Controllers
                 {
                     FirstName = UserFromRequest.FirstName,
                     LastName = UserFromRequest.LastName,
-                    UserName = UserFromRequest.UserName,
+                    UserName = UserFromRequest.Username,
                     Email = UserFromRequest.Email,
                     PhoneNumber = UserFromRequest.PhoneNumber,
                     Birthday = UserFromRequest.Birthday,

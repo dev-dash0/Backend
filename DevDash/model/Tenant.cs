@@ -17,7 +17,7 @@ namespace DevDash.model
         public string? TenantUrl { get; set; }
         [MaxLength(255)]
         public string? Keywords { get; set; }
-        public string? Image { get; set; }
+        public byte[]? Image { get; set; }
         //Foreign Keys
 
         [ForeignKey(nameof(User.Id))]
@@ -25,7 +25,7 @@ namespace DevDash.model
         public int OwnerID { get; set; }
 
         // Navigation Properties
-        public  User Owner { get; set; }
+        public required User Owner { get; set; }
         public ICollection<User>? JoinedUsers { get; set; }
         public ICollection<UserTenant>? UserTenants { get; set; }
 

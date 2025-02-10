@@ -39,8 +39,7 @@ namespace DevDash.Migrations
 
                     b.Property<DateTime>("CreationDate")
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("IssueId")
                         .HasColumnType("int");
@@ -48,26 +47,11 @@ namespace DevDash.Migrations
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("ProjectId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("SprintId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("TenantId")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
 
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("IssueId");
-
-                    b.HasIndex("ProjectId");
-
-                    b.HasIndex("SprintId");
-
-                    b.HasIndex("TenantId");
 
                     b.ToTable("Comments");
                 });
@@ -85,8 +69,7 @@ namespace DevDash.Migrations
 
                     b.Property<DateTime>("CreationDate")
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasColumnType("datetime2");
 
                     b.Property<DateOnly?>("Deadline")
                         .HasColumnType("date");
@@ -127,9 +110,6 @@ namespace DevDash.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
-                    b.Property<int>("TenantId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -147,8 +127,6 @@ namespace DevDash.Migrations
                     b.HasIndex("ProjectId");
 
                     b.HasIndex("SprintId");
-
-                    b.HasIndex("TenantId");
 
                     b.ToTable("Issues");
                 });
@@ -262,11 +240,7 @@ namespace DevDash.Migrations
 
                     b.Property<DateTime>("CreationDate")
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<int>("CreatorId")
-                        .HasColumnType("int");
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
@@ -302,8 +276,6 @@ namespace DevDash.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CreatorId");
-
                     b.HasIndex("ProjectManagerId");
 
                     b.HasIndex("TenantId");
@@ -321,8 +293,7 @@ namespace DevDash.Migrations
 
                     b.Property<DateTime>("CreatedAt")
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETUTCDATE()");
+                        .HasColumnType("datetime2");
 
                     b.Property<int?>("CreatedById")
                         .HasColumnType("int");
@@ -347,9 +318,6 @@ namespace DevDash.Migrations
                     b.Property<string>("Summary")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("TenantId")
-                        .HasColumnType("int");
-
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(255)
@@ -360,8 +328,6 @@ namespace DevDash.Migrations
                     b.HasIndex("CreatedById");
 
                     b.HasIndex("ProjectId");
-
-                    b.HasIndex("TenantId");
 
                     b.ToTable("Sprints");
                 });
@@ -377,8 +343,8 @@ namespace DevDash.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Image")
-                        .HasColumnType("nvarchar(max)");
+                    b.Property<byte[]>("Image")
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("Keywords")
                         .HasMaxLength(255)
@@ -421,6 +387,9 @@ namespace DevDash.Migrations
                     b.Property<int>("AccessFailedCount")
                         .HasColumnType("int");
 
+                    b.Property<byte[]>("Avatar")
+                        .HasColumnType("varbinary(max)");
+
                     b.Property<DateOnly?>("Birthday")
                         .HasColumnType("date");
 
@@ -440,9 +409,6 @@ namespace DevDash.Migrations
                         .IsRequired()
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
-
-                    b.Property<string>("ImageUrl")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("JoinedDate")
                         .HasColumnType("datetime2");
@@ -717,33 +683,9 @@ namespace DevDash.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DevDash.model.Project", "Project")
-                        .WithMany()
-                        .HasForeignKey("ProjectId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DevDash.model.Sprint", "Sprint")
-                        .WithMany()
-                        .HasForeignKey("SprintId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("DevDash.model.Tenant", "Tenant")
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("CreatedBy");
 
                     b.Navigation("Issue");
-
-                    b.Navigation("Project");
-
-                    b.Navigation("Sprint");
-
-                    b.Navigation("Tenant");
                 });
 
             modelBuilder.Entity("DevDash.model.Issue", b =>
@@ -764,19 +706,11 @@ namespace DevDash.Migrations
                         .HasForeignKey("SprintId")
                         .OnDelete(DeleteBehavior.Restrict);
 
-                    b.HasOne("DevDash.model.Tenant", "Tenant")
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("CreatedBy");
 
                     b.Navigation("Project");
 
                     b.Navigation("Sprint");
-
-                    b.Navigation("Tenant");
                 });
 
             modelBuilder.Entity("DevDash.model.IssueAssignedUser", b =>
@@ -822,12 +756,6 @@ namespace DevDash.Migrations
 
             modelBuilder.Entity("DevDash.model.Project", b =>
                 {
-                    b.HasOne("DevDash.model.User", "Creator")
-                        .WithMany("CreatedProjects")
-                        .HasForeignKey("CreatorId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
                     b.HasOne("DevDash.model.User", "Manager")
                         .WithMany("ManagedProjects")
                         .HasForeignKey("ProjectManagerId")
@@ -838,8 +766,6 @@ namespace DevDash.Migrations
                         .HasForeignKey("TenantId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("Creator");
 
                     b.Navigation("Manager");
 
@@ -859,17 +785,9 @@ namespace DevDash.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("DevDash.model.Tenant", "Tenant")
-                        .WithMany()
-                        .HasForeignKey("TenantId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.Navigation("CreatedBy");
 
                     b.Navigation("Project");
-
-                    b.Navigation("Tenant");
                 });
 
             modelBuilder.Entity("DevDash.model.Tenant", b =>
@@ -1003,8 +921,6 @@ namespace DevDash.Migrations
             modelBuilder.Entity("DevDash.model.User", b =>
                 {
                     b.Navigation("Comments");
-
-                    b.Navigation("CreatedProjects");
 
                     b.Navigation("IssueAssignedUsers");
 

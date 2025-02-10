@@ -1,5 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata.Internal;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace DevDash.model
@@ -53,12 +52,8 @@ namespace DevDash.model
         public int? SprintId { get; set; } // Made nullable to allow setting to null
 
         [Required]
-        [ForeignKey("ProjectId")]
         public required int ProjectId { get; set; }
-        [ForeignKey("TenantId")]
-        public int TenantId { get; set; }
 
-        [ForeignKey("UserId")]
         public  int? CreatedById { get; set; }
 
         // Navigation Properties
@@ -66,7 +61,6 @@ namespace DevDash.model
         public required Project Project { get; set; }
 
         public  User? CreatedBy { get; set; }
-        public Tenant Tenant { get; set; }
 
         public ICollection<User>? AssignedUsers { get; set; }
 
